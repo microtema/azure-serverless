@@ -1,23 +1,26 @@
 // tag::azurerm_resource_group[]
 resource "azurerm_resource_group" "this" {
-  name     = "rg-${var.project}-${var.env}-${var.location}-${var.counter}"
+  name     = "rg-${local.namespace}"
   location = var.location
+
+  tags = local.tags
 }
 // end::azurerm_resource_group[]
 
 // tag::azurerm_storage_account[]
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "storage-${var.project}-${var.env}-${var.location}-${var.counter}"
+  name                     = "${local.namespace_short}"
   resource_group_name      = azurerm_resource_group.this.name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  tags = local.tags
 }
 // end::azurerm_storage_account[]
 
 // tag::azurerm_application_insights[]
 resource "azurerm_application_insights" "this" {
-  name                = "insights-${var.project}-${var.env}-${var.location}-${var.counter}"
+  name                = "insights-${local.namespace}"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   application_type    = "Node.JS"
@@ -26,7 +29,7 @@ resource "azurerm_application_insights" "this" {
 
 // tag::azurerm_app_service_plan[]
 resource "azurerm_app_service_plan" "this" {
-  name                = "plan-${var.project}-${var.env}-${var.location}-${var.counter}"
+  name                = "plan-${local.namespace}"
   resource_group_name = azurerm_resource_group.this.name
   location            = var.location
   kind                = "FunctionApp"
@@ -35,12 +38,13 @@ resource "azurerm_app_service_plan" "this" {
     tier = "Dynamic"
     size = "Y1"
   }
+  tags = local.tags
 }
 // end::azurerm_app_service_plan[]
 
-// tag::azurerm_app_service_plan[]
+// tag::azurerm_function_app[]
 resource "azurerm_function_app" "this" {
-  name                = "app-${var.project}-${var.env}-${var.location}-${var.counter}"
+  name                = "app-${local.namespace}"
   resource_group_name = azurerm_resource_group.this.name
   location            = var.location
   app_service_plan_id = azurerm_app_service_plan.this.id
@@ -63,5 +67,6 @@ resource "azurerm_function_app" "this" {
       app_settings["WEBSITE_RUN_FROM_PACKAGE"],
     ]
   }
+  tags = local.tags
 }
-// end::azurerm_app_service_plan[]
+// end::azurerm_function_app[]

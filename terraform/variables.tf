@@ -16,6 +16,10 @@ variable "location" {
   default     = "westeurope"
 }
 
+variable "failover_location" {
+  default = "North Europe"
+}
+
 variable "counter" {
   type        = string
   description = "Counter for resources"

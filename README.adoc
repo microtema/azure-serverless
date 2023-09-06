@@ -1,4 +1,4 @@
-= Azure Serverless with Terraform
+= Azure Serverless Architecture with Terraform
 
 == Terraform
 
@@ -126,7 +126,7 @@ For CORS configuration, check the cors parameter in the resource documentation.
 
 [source,hcl-terraform]
 ----
-include::terraform/main.tf[tags=azurerm_app_service_plan]
+include::terraform/main.tf[tags=azurerm_function_app]
 ----
 
 === Terraform Output

@@ -6,6 +6,14 @@ terraform {
       version = "~>3.0"
     }
   }
+/*
+  backend "azurerm" {
+    resource_group_name  = "rg-microtema-dev-westeurope-01"
+    storage_account_name = "microtemadevwesteurope01"
+    container_name       = "scm-releases"
+    key                  = "terraform-state.json"
+  }
+  */
 }
 provider "azurerm" {
   skip_provider_registration = "true"
