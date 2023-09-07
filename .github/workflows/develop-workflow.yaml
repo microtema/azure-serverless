@@ -76,11 +76,11 @@ jobs:
           echo "ARM_RG_ID=$(az group show --name rg-$NAMESPACE --query id)" >> $GITHUB_ENV
           echo "ARM_SUBSCRIPTION_ID=${ARM_RG_ID:15:36}" >> $GITHUB_ENV
           
-          echo ARM_CLIENT_ID=$ARM_CLIENT_ID
-          echo ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET
-          echo ARM_TENANT_ID=$ARM_TENANT_ID
-          echo ARM_RG_ID=$ARM_RG_ID
-          echo ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID
+          echo ARM_CLIENT_ID=${{ env.ARM_CLIENT_ID }}
+          echo ARM_CLIENT_SECRET=${{ env.ARM_CLIENT_SECRET }}
+          echo ARM_TENANT_ID=${{ env.ARM_TENANT_ID }}
+          echo ARM_RG_ID=${{ env.ARM_RG_ID }}
+          echo ARM_SUBSCRIPTION_ID=${{ env.ARM_SUBSCRIPTION_ID }}
       - name: Terraform Init
         working-directory: ./terraform
         run: |
