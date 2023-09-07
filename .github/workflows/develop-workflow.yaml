@@ -44,7 +44,7 @@ jobs:
         if: steps.rg-check.outputs.exists == 'false'
         run: |
           az storage account create \
-          --name ${NAMESPACE//-/} \
+          --name ${NAMESPACE//[^[:alnum:]]/""} \
           --resource-group rg-$NAMESPACE
       - name: Create Storage Container
         if: steps.rg-check.outputs.exists == 'false'
@@ -52,7 +52,7 @@ jobs:
           az storage container create \
           --name scm-releases \
           --resource-group rg-$NAMESPACE \
-          --account-name ${NAMESPACE//-/}
+          --account-name ${NAMESPACE//[^[:alnum:]]/""}
   deployment:
     name: Deployment
     runs-on: [ ubuntu-latest ]
@@ -74,7 +74,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="resource_group_name=rg-$NAMESPACE" \
-            -backend-config="storage_account_name=${NAMESPACE//-/}"
+            -backend-config="storage_account_name=${NAMESPACE//[^[:alnum:]]/""}"
       - name: Terraform Validate
         working-directory: ./terraform
         run: terraform validate
