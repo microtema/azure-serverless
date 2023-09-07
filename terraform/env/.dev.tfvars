@@ -1,4 +1,4 @@
 project = "microtema"
-environment = "dev"
+env = "dev"
 location = "westeurope"
 counter = "01"

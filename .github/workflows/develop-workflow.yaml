@@ -86,4 +86,4 @@ jobs:
             -var-file="env/.$STAGE_NAME.tfvars"
       - name: Terraform Apply
         working-directory: ./terraform
-        run: echo terraform apply tfplan
+        run: terraform apply tfplan
