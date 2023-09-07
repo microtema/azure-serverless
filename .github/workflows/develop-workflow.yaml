@@ -16,7 +16,7 @@ env:
 jobs:
   deployment:
     name: Deployment
-    runs-on: [ self-hosted ]
+    runs-on: [ self-hosted, ubuntu-latest ]
     needs: [ ]
     steps:
       - name: Checkout
