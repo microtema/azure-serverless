@@ -14,7 +14,7 @@ env:
   VERSION: "1.0.0-SNAPSHOT"
   STAGE_NAME: "dev"
   NODE_VERSION: "16"
-  NAMESPACE: "microtema-dev-westeurope-07"
+  NAMESPACE: "microtema-dev-westeurope-08"
   AZURE_LOCATION: "westeurope"
 jobs:
   initialize:
@@ -31,16 +31,28 @@ jobs:
         run: echo "exists=$(az group exists -n rg-$NAMESPACE)" >> $GITHUB_OUTPUT
       - name: Create Resource Group
         if: steps.rg-check.outputs.exists == 'false'
-        run: az group create --location $AZURE_LOCATION --name rg-$NAMESPACE
+        run: |
+          az group create \
+          --location $AZURE_LOCATION \
+          --name rg-$NAMESPACE
       - name: Wait Resource Group
         if: steps.rg-check.outputs.exists == 'false'
-        run: az group wait --created  --resource-group rg-$NAMESPACE
+        run: |
+          az group wait --created  \
+           --resource-group rg-$NAMESPACE
       - name: Create Storage Account
         if: steps.rg-check.outputs.exists == 'false'
-        run: az storage account create --name ${NAMESPACE//-/} --resource-group rg-$NAMESPACE
+        run: |
+          az storage account create \
+          --name ${NAMESPACE//-/} \
+          --resource-group rg-$NAMESPACE
       - name: Create Storage Container
         if: steps.rg-check.outputs.exists == 'false'
-        run: az storage container create --name scm-releases --resource-group rg-$NAMESPACE
+        run: |
+          az storage container create \
+          --name scm-releases \
+          --resource-group rg-$NAMESPACE \
+          --account-name ${NAMESPACE//-/}
   deployment:
     name: Deployment
     runs-on: [ ubuntu-latest ]
