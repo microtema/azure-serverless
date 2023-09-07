@@ -25,10 +25,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        #  creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
       - name: Check Resource Group
         id: rg-check
         run: echo "exists=$(az group exists -n rg-$NAMESPACE)" >> $GITHUB_OUTPUT
@@ -80,10 +77,13 @@ jobs:
             -backend-config="storage_account_name=${NAMESPACE//-/}"
       - name: Terraform Validate
         working-directory: ./terraform
-        run: echo terraform validate
+        run: terraform validate
       - name: Terraform Plan
         working-directory: ./terraform
-        run: echo terraform plan -out=tfplan -input=false -var-file="env/.dev.tfvars"
+        run: |
+          terraform plan -out=tfplan \
+            -input=false \
+            -var-file="env/.$STAGE_NAME.tfvars"
       - name: Terraform Apply
         working-directory: ./terraform
         run: echo terraform apply tfplan
