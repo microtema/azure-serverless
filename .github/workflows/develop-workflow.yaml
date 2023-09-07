@@ -57,6 +57,11 @@ jobs:
     name: Deployment
     runs-on: [ ubuntu-latest ]
     needs: [ initialize ]
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID}}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET}}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -65,11 +70,6 @@ jobs:
         with:
           terraform_wrapper: false
       - name: Terraform Init
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID}}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET}}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
         working-directory: ./terraform
         run: |
           terraform init \
