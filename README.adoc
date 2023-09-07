@@ -38,7 +38,7 @@ Alternatively you can pass them as command line arguments or with environment va
 
 [source,hcl-terraform]
 ----
-include::terraform/env/.dev[]
+include::terraform/env/.dev.tfvars[]
 ----
 
 === Provider
