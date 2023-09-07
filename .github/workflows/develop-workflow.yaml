@@ -17,13 +17,11 @@ env:
   AZURE_RESOURCE_GROUP: "rg-microtema-dev-westeurope-03"
   AZURE_LOCATION: "westeurope"
 jobs:
-  deployment:
-    name: Deployment
+  initialize:
+    name: Initialize
     runs-on: [ ubuntu-latest ]
     needs: [ ]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -33,7 +31,17 @@ jobs:
         run: echo "exists=$(az group exists -n $AZURE_RESOURCE_GROUP)" >> $GITHUB_OUTPUT
       - name: Create Resource Group
         if: steps.rg-check.outputs.exists == 'false'
-        run: az group wait create --location $AZURE_LOCATION --name $AZURE_RESOURCE_GROUP
+        run: az group create --location $AZURE_LOCATION --name $AZURE_RESOURCE_GROUP
+      - name: Create Resource Group
+        if: steps.rg-check.outputs.exists == 'false'
+        run: az group wait --created  --resource-group $AZURE_RESOURCE_GROUP
+  deployment:
+    name: Deployment
+    runs-on: [ ubuntu-latest ]
+    needs: [ initialize ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
