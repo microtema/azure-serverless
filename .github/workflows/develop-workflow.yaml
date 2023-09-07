@@ -66,7 +66,10 @@ jobs:
           terraform_wrapper: false
       - name: Terraform Init
         working-directory: ./terraform
-        run: echo terraform init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=rg-$NAMESPACE" \
+            -backend-config="storage_account_name=${NAMESPACE//-/}"
       - name: Terraform Validate
         working-directory: ./terraform
         run: echo terraform validate
