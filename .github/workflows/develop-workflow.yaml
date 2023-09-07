@@ -14,7 +14,7 @@ env:
   VERSION: "1.0.0-SNAPSHOT"
   STAGE_NAME: "dev"
   NODE_VERSION: "16"
-  NAMESPACE: "microtema-dev-westeurope-06"
+  NAMESPACE: "microtema-dev-westeurope-07"
   AZURE_LOCATION: "westeurope"
 jobs:
   initialize:
@@ -38,6 +38,9 @@ jobs:
       - name: Create Storage Account
         if: steps.rg-check.outputs.exists == 'false'
         run: az storage account create --name ${NAMESPACE//-/} --resource-group rg-$NAMESPACE
+      - name: Create Storage Container
+        if: steps.rg-check.outputs.exists == 'false'
+        run: az storage container create --name scm-releases --resource-group rg-$NAMESPACE
   deployment:
     name: Deployment
     runs-on: [ ubuntu-latest ]
