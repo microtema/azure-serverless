@@ -73,7 +73,8 @@ jobs:
           echo "ARM_CLIENT_ID=$(az ad sp list --display-name CICD --query '[0].appId')" >> $GITHUB_ENV
           echo "ARM_CLIENT_SECRET=~Xx8Q~fAkGUc8q2VBezCLZS2mPTgm560w4zUscsq" >> $GITHUB_ENV
           echo "ARM_TENANT_ID=$(az ad sp list --display-name CICD --query '[0].appOwnerOrganizationId')" >> $GITHUB_ENV
-          echo "ARM_SUBSCRIPTION_ID=a30f01f2-f866-44b3-a767-ad8d25708738" >> $GITHUB_ENV
+          echo "ARM_RG_ID=$(az group show --name rg-$NAMESPACE --query id)" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${ARM_RG_ID:15:36}" >> $GITHUB_ENV
       - name: Terraform Init
         working-directory: ./terraform
         run: |
