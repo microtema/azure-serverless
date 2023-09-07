@@ -64,9 +64,12 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Setup Azure
         run: |
-          az ad sp list --display-name CICD --query '[0].appOwnerOrganizationId'
           echo "ARM_CLIENT_ID=$(az ad sp list --display-name CICD --query '[0].appId')" >> $GITHUB_ENV
           echo "ARM_CLIENT_SECRET=~Xx8Q~fAkGUc8q2VBezCLZS2mPTgm560w4zUscsq" >> $GITHUB_ENV
           echo "ARM_CLIENT_ID=$(az ad sp list --display-name CICD --query '[0].appOwnerOrganizationId')" >> $GITHUB_ENV
