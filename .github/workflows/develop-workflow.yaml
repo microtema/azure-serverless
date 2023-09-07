@@ -14,7 +14,8 @@ env:
   VERSION: "1.0.0-SNAPSHOT"
   STAGE_NAME: "dev"
   NODE_VERSION: "16"
-  RESOURCE_GROUP: "rg-microtema-dev-westeurope-01"
+  AZURE_RESOURCE_GROUP: "rg-microtema-dev-westeurope-02"
+  AZURE_LOCATION: "westeurope"
 jobs:
   deployment:
     name: Deployment
@@ -29,10 +30,10 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Check Resource Group
         id: rg-check
-        run: echo "exists=$(az group exists -n $RESOURCE_GROUP)" >> $GITHUB_OUTPUT
+        run: echo "exists=$(az group exists -n $AZURE_RESOURCE_GROUP)" >> $GITHUB_OUTPUT
       - name: Create Resource Group
         if: steps.rg-check.outputs.exists == 'false'
-        run: echo create azure resource group
+        run: az group wait create -n $AZURE_RESOURCE_GROUP -l $AZURE_LOCATION
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
