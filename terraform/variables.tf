@@ -17,7 +17,7 @@ variable "location" {
 }
 
 variable "failover_location" {
-  default = "North Europe"
+  default = "northeurope"
 }
 
 variable "counter" {

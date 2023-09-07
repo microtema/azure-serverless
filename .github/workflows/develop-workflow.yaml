@@ -1,0 +1,39 @@
+############## Created by de.microtema:github-workflow-maven-plugin ############
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+# Files under .github/workflows folder are generated and should not be edited. #
+################################################################################
+
+name: '[DEV] Azure Serverless Architecture with Terraform'
+on:
+  push:
+    branches:
+      - develop
+env:
+  APP_NAME: "azure-serverless"
+  APP_DISPLAY_NAME: "Azure Serverless Architecture with Terraform"
+  VERSION: "1.0.0-SNAPSHOT"
+  NODE_VERSION: "16"
+jobs:
+  deployment:
+    name: Deployment
+    runs-on: [ self-hosted ]
+    needs: [ ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: echo terraform init
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: echo terraform validate
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: echo terraform plan -out=tfplan -input=false -var-file="env/.dev.tfvars"
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: echo terraform apply tfplan
