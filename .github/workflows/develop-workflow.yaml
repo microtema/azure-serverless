@@ -12,7 +12,9 @@ env:
   APP_NAME: "azure-serverless"
   APP_DISPLAY_NAME: "Azure Serverless Architecture with Terraform"
   VERSION: "1.0.0-SNAPSHOT"
+  STAGE_NAME: "dev"
   NODE_VERSION: "16"
+  RESOURCE_GROUP: "rg-microtema-dev-westeurope-01"
 jobs:
   deployment:
     name: Deployment
@@ -25,6 +27,12 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Check Resource Group
+        id: rg-check
+        run: echo "exists=$(az group exists -n $RESOURCE_GROUP)" >> $GITHUB_OUTPUT
+      - name: Create Resource Group
+        if: steps.rg-check.outputs.exists == 'false'
+        run: echo create azure resource group
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
