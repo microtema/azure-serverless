@@ -68,6 +68,14 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Setup ARM envs
+        if: steps.rg-check.outputs.exists == 'false'
+        run: |
+          az login \
+            --service-principal \
+            --username 474444b8-5a93-4d19-8270-b3ce3c70f412 \
+            --password "~Xx8Q~fAkGUc8q2VBezCLZS2mPTgm560w4zUscsq" \
+            --tenant 93faadee-d156-4a4b-b805-6161d1ff3448
       - name: Terraform Init
         working-directory: ./terraform
         run: |
