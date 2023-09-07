@@ -33,7 +33,7 @@ jobs:
         run: echo "exists=$(az group exists -n $AZURE_RESOURCE_GROUP)" >> $GITHUB_OUTPUT
       - name: Create Resource Group
         if: steps.rg-check.outputs.exists == 'false'
-        run: az group wait create -n $AZURE_RESOURCE_GROUP -l $AZURE_LOCATION
+        run: az group create --location $AZURE_LOCATION --name $AZURE_RESOURCE_GROUP
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
