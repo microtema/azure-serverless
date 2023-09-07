@@ -67,9 +67,9 @@ jobs:
       - name: Setup Azure
         run: |
           echo "ARM_CLIENT_ID=474444b8-5a93-4d19-8270-b3ce3c70f412" >> $GITHUB_ENV
-          echo "ARM_CLIENT_SECRET=~Xx8Q~fAkGUc8q2VBezCLZS2mPTgm560w4zUscsq" >> $GITHUB_STATE
-          echo "ARM_TENANT_ID=93faadee-d156-4a4b-b805-6161d1ff3448" >> $GITHUB_STATE
-          echo "ARM_SUBSCRIPTION_ID=a30f01f2-f866-44b3-a767-ad8d25708738" >> $GITHUB_STATE
+          echo "ARM_CLIENT_SECRET=~Xx8Q~fAkGUc8q2VBezCLZS2mPTgm560w4zUscsq" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=93faadee-d156-4a4b-b805-6161d1ff3448" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=a30f01f2-f866-44b3-a767-ad8d25708738" >> $GITHUB_ENV
       - name: Terraform Init
         working-directory: ./terraform
         run: |
