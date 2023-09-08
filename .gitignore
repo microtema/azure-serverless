@@ -1,3 +1,10 @@
 shell
 
 .idea
+
+node_modules
+
+lib
+
+terraform/.terraform
+terraform/.terraform.lock.hcl

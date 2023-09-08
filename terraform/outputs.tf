@@ -8,6 +8,6 @@ output "function_app_name" {
 }
 
 output "function_app_default_hostname" {
-  value       = azurerm_function_app.this.default_hostname
+  value       = "https://${azurerm_function_app.this.default_hostname}"
   description = "Deployed function app hostname"
 }

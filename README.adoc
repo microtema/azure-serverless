@@ -97,9 +97,15 @@ A Function App must always be associated with an App Service Plan which defines 
 
 There are 3 plans available:
 
-* Consumption Plan. Serverless, scales automatically with the number of events. No events => zero instances (you pay nothing).
-* Premium Plan. You reserve a number of always-ready instances which run no matter if there are events or not. As load grows, new instances are added automatically.
-* Dedicated (App Service) Plan. FAs will run on VMs managed by you. Doesn't scale automatically based on events.
+* Consumption Plan.
+Serverless, scales automatically with the number of events.
+No events => zero instances (you pay nothing).
+* Premium Plan.
+You reserve a number of always-ready instances which run no matter if there are events or not.
+As load grows, new instances are added automatically.
+* Dedicated (App Service) Plan.
+FAs will run on VMs managed by you.
+Doesn't scale automatically based on events.
 
 Naming is a bit unfortunate here since the 3rd option has "App Service Plan" in it too.
 We want to go serverless thus we choose a Linux Consumption App Service Plan. sku section below sets it.
@@ -139,4 +145,17 @@ We also need the Azure name of the function app for the next step where we deplo
 ----
 include::terraform/outputs.tf[]
 ----
+
+=== Verify infrastructure is deployed
+
+Open the function app hostname in the browser.
+You should see the success page:
+
+image::docs/08_Deployment.png[]
+
+== Deploy the code
+
+
+
+
 
