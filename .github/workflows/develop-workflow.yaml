@@ -123,6 +123,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET}}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+      ARM_APP_NAME: app-${{ env.NAMESPACE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -152,3 +153,8 @@ jobs:
       - name: Terraform Apply
         working-directory: ./terraform
         run: terraform apply tfplan
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.ARM_APP_NAME }}
+          package: ../dist
