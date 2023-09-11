@@ -46,27 +46,63 @@ resource "azurerm_app_service_plan" "this" {
 }
 // end::azurerm_app_service_plan[]
 
+// tag::archive_file[]
+data "archive_file" "lib" {
+  type        = "zip"
+  source_dir  = "${path.module}/../"
+  output_path = "${path.module}/../lib/${var.project}.zip"
+}
+// end::archive_file[]
+
+// tag::azurerm_storage_blob[]
+resource "azurerm_storage_blob" "lib" {
+  name                   = "${filesha256(data.archive_file.lib.output_path)}.zip"
+  storage_account_name   = data.azurerm_storage_account.this.name
+  storage_container_name = data.azurerm_storage_container.this.name
+  type                   = "Block"
+  source                 = data.archive_file.lib.output_path
+}
+// tag::azurerm_storage_blob[]
+
+// tag::azurerm_storage_account_blob_container_sas[]
+data "azurerm_storage_account_blob_container_sas" "this" {
+  connection_string = data.azurerm_storage_account.this.primary_connection_string
+  container_name    = data.azurerm_storage_container.this.name
+
+  start  = "2023-09-01T00:00:00Z"
+  expiry = "2024-01-01T00:00:00Z"
+
+  permissions {
+    read   = true
+    add    = false
+    create = false
+    write  = false
+    delete = false
+    list   = false
+  }
+}
+// end::azurerm_storage_account_blob_container_sas[]
+
 // tag::azurerm_function_app[]
 resource "azurerm_function_app" "this" {
-  name                       = "app-${local.namespace}"
-  resource_group_name        = data.azurerm_resource_group.this.name
-  location                   = var.location
-  app_service_plan_id        = azurerm_app_service_plan.this.id
-  storage_account_name       = data.azurerm_storage_account.this.name
-  storage_account_access_key = data.azurerm_storage_account.this.primary_access_key
-  version                    = "~3"
-  os_type                    = "linux"
-  app_settings               = {
-    "WEBSITE_RUN_FROM_PACKAGE"       = "1",
+  name                = "app-${local.namespace}"
+  resource_group_name = data.azurerm_resource_group.this.name
+  location            = var.location
+  app_service_plan_id = azurerm_app_service_plan.this.id
+  app_settings        = {
+    "WEBSITE_RUN_FROM_PACKAGE"       = "https://${data.azurerm_storage_account.this.name}.blob.core.windows.net/${data.azurerm_storage_container.this.name}/${azurerm_storage_blob.lib.name}${data.azurerm_storage_account_blob_container_sas.this.sas}",
     "FUNCTIONS_WORKER_RUNTIME"       = "node",
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.this.instrumentation_key,
     "AzureWebJobsDisableHomepage"    = "true"
-    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
   }
+  os_type = "linux"
   site_config {
     linux_fx_version          = "node|14"
     use_32_bit_worker_process = false
   }
+  storage_account_name       = data.azurerm_storage_account.this.name
+  storage_account_access_key = data.azurerm_storage_account.this.primary_access_key
+  version                    = "~3"
 
   /*
   lifecycle {
@@ -78,27 +114,3 @@ resource "azurerm_function_app" "this" {
   tags = local.tags
 }
 // end::azurerm_function_app[]
-
-// tag::archive_file[]
-data "archive_file" "lib" {
-  type        = "zip"
-  source_dir  = "${path.module}/../dist/"
-  output_path = "${path.module}/../dist/${var.project}.zip"
-}
-// end::archive_file[]
-
-locals {
-  # publish_code_command = "func azure functionapp publish ${azurerm_function_app.this.name} --typescript"
-  publish_code_command = "az functionapp deployment source config-zip --resource-group ${data.azurerm_resource_group.this.name} --name ${azurerm_function_app.this.name} --src ${data.archive_file.lib.output_path}"
-}
-
-resource "null_resource" "function_app_publish" {
-  provisioner "local-exec" {
-    command = local.publish_code_command
-  }
-  depends_on = [local.publish_code_command]
-  triggers   = {
-    input_json           = filemd5(data.archive_file.lib.output_path)
-    publish_code_command = local.publish_code_command
-  }
-}
