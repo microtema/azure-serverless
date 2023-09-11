@@ -65,10 +65,8 @@ resource "azurerm_function_app" "this" {
   version                    = "~3"
   os_type                    = "linux"
   app_settings               = {
-    "WEBSITE_RUN_FROM_PACKAGE"       = ".",
-    "FUNCTIONS_WORKER_RUNTIME"       = "node",
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.this.instrumentation_key,
-    "AzureWebJobsDisableHomepage"    = "true"
+    "FUNCTIONS_WORKER_RUNTIME"       = "node"
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.this.instrumentation_key
   }
   site_config {
     linux_fx_version          = "node|14"
