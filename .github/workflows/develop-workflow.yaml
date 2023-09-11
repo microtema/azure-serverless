@@ -73,6 +73,11 @@ jobs:
         run: |
           mkdir -p artifact/$BUILD_DIR
           cp -r $BUILD_DIR/* artifact/$BUILD_DIR/
+      - name: 'Artifact: upload'
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-artifact
+          path: artifact
   promote:
     name: Promote
     runs-on: [ ubuntu-latest ]
