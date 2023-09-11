@@ -21,7 +21,7 @@ jobs:
     name: Initialize
     runs-on: [ ubuntu-latest ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache node modules
         id: cache-nodemodules
         uses: actions/cache@v3
@@ -52,7 +52,7 @@ jobs:
     needs: [ compile ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'NPM: test'
         run: npm test
   build:
@@ -61,7 +61,7 @@ jobs:
     needs: [ unit-test ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'NPM: build'
         run: npm run build
   promote:
@@ -112,10 +112,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: 'Node: Setup'
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: 'NPM: install azure-functions-cli'
         run: npm i -g azure-functions-cli
       - name: Setup Terraform
