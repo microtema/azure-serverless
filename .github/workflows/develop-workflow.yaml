@@ -57,7 +57,7 @@ jobs:
         run: npm test
   build:
     name: Build
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-latest ]
     needs: [ compile ]
     steps:
       - name: 'Checkout'
