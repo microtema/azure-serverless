@@ -19,7 +19,7 @@ env:
 jobs:
   compile:
     name: Compile
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-latest ]
     needs: [ ]
     steps:
       - name: 'Checkout'
@@ -37,7 +37,7 @@ jobs:
           path: node_modules
   security-check:
     name: Security Check
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-latest ]
     needs: [ compile ]
     steps:
       - name: 'Checkout'
@@ -54,7 +54,7 @@ jobs:
         run: npm run security-check
   unit-test:
     name: Unit Test
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-latest ]
     needs: [ compile ]
     steps:
       - name: 'Checkout'
