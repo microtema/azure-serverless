@@ -123,7 +123,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET}}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
-      ARM_APP_NAME: app-${{ env.NAMESPACE }}
+      ARM_APP_NAME: app-${{ var.NAMESPACE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
