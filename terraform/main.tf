@@ -49,8 +49,8 @@ resource "azurerm_app_service_plan" "this" {
 // tag::archive_file[]
 data "archive_file" "lib" {
   type        = "zip"
-  source_dir  = "${path.module}/../"
-  output_path = "${path.module}/../lib/${var.project}.zip"
+  source_dir  = "${path.module}/../dist"
+  output_path = "${path.module}/../dist/${var.project}.zip"
 }
 // end::archive_file[]
 
