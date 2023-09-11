@@ -23,7 +23,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     steps:
       - uses: actions/checkout@v3
-      - name: Cache node modules
+      - name: 'Cache node modules'
         id: cache-nodemodules
         uses: actions/cache@v3
         env:
@@ -39,7 +39,7 @@ jobs:
         if: steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: npm install
   security-check:
-    name: Security Check
+    name: 'Security Check'
     runs-on: [ ubuntu-latest ]
     needs: [ compile ]
     steps:
@@ -48,7 +48,7 @@ jobs:
       - name: 'NPM: security-check'
         run: npm run security-check
   unit-test:
-    name: Unit Test
+    name: 'Unit Test'
     runs-on: [ ubuntu-latest ]
     needs: [ compile ]
     steps:
@@ -57,7 +57,7 @@ jobs:
       - name: 'NPM: test'
         run: npm test
   build:
-    name: Build
+    name: 'Build'
     runs-on: [ ubuntu-latest ]
     needs: [ unit-test ]
     env:
@@ -79,18 +79,18 @@ jobs:
           name: dist-artifact
           path: artifact
   promote:
-    name: Promote
+    name: 'Promote'
     runs-on: [ ubuntu-latest ]
     needs: [ build ]
     steps:
-      - name: Azure Login
+      - name: 'Azure Login'
         uses: azure/login@v1
         with:
           creds: ${{ env.AZURE_CREDENTIALS }}
-      - name: Check Resource Group
+      - name: 'Check Resource Group'
         id: rg-check
         run: echo "exists=$(az group exists -n rg-$NAMESPACE)" >> $GITHUB_OUTPUT
-      - name: Create Resource Group
+      - name: 'Create Resource Group'
         if: steps.rg-check.outputs.exists == 'false'
         run: |
           az group create \
@@ -115,7 +115,7 @@ jobs:
           --resource-group rg-$NAMESPACE \
           --account-name ${NAMESPACE//[^[:alnum:]]/""}
   deployment:
-    name: Deployment
+    name: 'Deployment'
     runs-on: [ ubuntu-latest ]
     needs: [ promote ]
     env:
@@ -124,9 +124,9 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
     steps:
-      - name: Checkout
+      - name: 'Checkout'
         uses: actions/checkout@v3
-      - name: Setup Terraform
+      - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
@@ -134,30 +134,26 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: dist-artifact
-      - name: Shell
-        run: ls
-      - name: Shell
-        run: tree
-      - name: Terraform Init
+      - name: 'Terraform Init'
         working-directory: ./terraform
         run: |
           terraform init \
             -backend-config="resource_group_name=rg-$NAMESPACE" \
             -backend-config="storage_account_name=${NAMESPACE//[^[:alnum:]]/""}"
-      - name: Terraform Validate
+      - name: 'Terraform Validate'
         working-directory: ./terraform
         run: terraform validate
-      - name: Terraform Plan
+      - name: 'Terraform Plan'
         working-directory: ./terraform
         run: |
           terraform plan -out=tfplan \
             -input=false \
             -var-file="env/.$STAGE_NAME.tfvars"
-      - name: Terraform Apply
+      - name: 'Terraform Apply'
         working-directory: ./terraform
         run: terraform apply tfplan
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         with:
           app-name: app-${{ env.NAMESPACE }}
-          package: ../dist
+          package: dist
