@@ -11,7 +11,8 @@
     "start": "npm-run-all --parallel start:host watch",
     "prepublish": "npm run build:production",
     "publish": "func azure functionapp publish microtema",
-    "test": "echo \"No tests yet...\""
+    "test": "echo \"No tests yet...\"",
+    "security-check": "echo \"No security-check yet...\""
   },
   "devDependencies": {
     "@azure/functions": "^1.2.3",
