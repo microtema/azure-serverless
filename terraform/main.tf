@@ -89,28 +89,20 @@ resource "azurerm_function_app" "this" {
   resource_group_name = data.azurerm_resource_group.this.name
   location            = var.location
   app_service_plan_id = azurerm_app_service_plan.this.id
+  storage_account_name       = data.azurerm_storage_account.this.name
+  storage_account_access_key = data.azurerm_storage_account.this.primary_access_key
+  version                    = "~3"
   app_settings        = {
+  os_type = "linux"
     "WEBSITE_RUN_FROM_PACKAGE"       = "https://${data.azurerm_storage_account.this.name}.blob.core.windows.net/${data.azurerm_storage_container.this.name}/${azurerm_storage_blob.lib.name}${data.azurerm_storage_account_blob_container_sas.this.sas}",
     "FUNCTIONS_WORKER_RUNTIME"       = "node",
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.this.instrumentation_key,
     "AzureWebJobsDisableHomepage"    = "true"
   }
-  os_type = "linux"
   site_config {
     linux_fx_version          = "node|14"
     use_32_bit_worker_process = false
   }
-  storage_account_name       = data.azurerm_storage_account.this.name
-  storage_account_access_key = data.azurerm_storage_account.this.primary_access_key
-  version                    = "~3"
-
-  /*
-  lifecycle {
-    ignore_changes = [
-      app_settings["WEBSITE_RUN_FROM_PACKAGE"],
-    ]
-  }
-  */
   tags = local.tags
 }
 // end::azurerm_function_app[]
