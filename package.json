@@ -4,17 +4,18 @@
   "description": "Azure Serverless with Terraform",
   "scripts": {
     "build": "tsc",
-    "build:production": "npm run prestart && npm prune --production",
+    "build:production": "npm run prestart",
     "watch": "tsc --w",
     "prestart": "npm run build && func extensions install",
     "start:host": "func start",
     "start": "npm-run-all --parallel start:host watch",
+    "prepublish": "npm run build:production",
+    "publish": "func azure functionapp publish microtema",
     "test": "echo \"No tests yet...\""
   },
   "devDependencies": {
-    "@azure/functions": "^1.0.1-beta1",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^3.3.3"
+    "@azure/functions": "^1.2.3",
+    "npm-run-all": "^4.1.5"
   },
   "repository": {
     "type": "git",
@@ -31,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/microtema/azure-serverless/issues"
   },
-  "homepage": "https://github.com/microtema/azure-serverless#readme"
+  "homepage": "https://github.com/microtema/azure-serverless#readme",
+  "dependencies": {
+    "typescript": "^5.2.2"
+  }
 }
