@@ -89,7 +89,7 @@ data "archive_file" "lib" {
 
 locals {
   # publish_code_command = "func azure functionapp publish ${azurerm_function_app.this.name} --typescript"
-  publish_code_command = "az functionapp deployment source config-zip --resource-group ${data.azurerm_resource_group.this.name} --name ${azurerm_function_app.this.name} --src ${data.archive_file.lib.source_dir}"
+  publish_code_command = "az functionapp deployment source config-zip --resource-group ${data.azurerm_resource_group.this.name} --name ${azurerm_function_app.this.name} --src ${data.archive_file.lib.output_path}"
 }
 
 resource "null_resource" "function_app_publish" {

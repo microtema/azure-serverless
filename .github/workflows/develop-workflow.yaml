@@ -16,6 +16,7 @@ env:
   NODE_VERSION: "16"
   NAMESPACE: "microtema-dev-westeurope-01"
   AZURE_LOCATION: "westeurope"
+  AZURE_CREDENTIALS: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
 jobs:
   compile:
     name: Initialize
@@ -74,7 +75,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          creds: ${{ env.AZURE_CREDENTIALS }}
       - name: Check Resource Group
         id: rg-check
         run: echo "exists=$(az group exists -n rg-$NAMESPACE)" >> $GITHUB_OUTPUT
@@ -121,7 +122,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          creds: ${{ env.AZURE_CREDENTIALS }}
       - name: Terraform Init
         working-directory: ./terraform
         run: |
