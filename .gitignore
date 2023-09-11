@@ -49,6 +49,7 @@ __azurite_db*__.json
 
 # terraform
 terraform/.terraform
+!terraform/env
 
 .vscode
 .idea
