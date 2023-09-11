@@ -20,7 +20,7 @@ jobs:
   compile:
     name: Compile
     runs-on: [ self-hosted ]
-    needs: [ versioning ]
+    needs: [ ]
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
