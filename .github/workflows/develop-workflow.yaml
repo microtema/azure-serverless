@@ -1,0 +1,171 @@
+############## Created by de.microtema:github-workflow-maven-plugin ############
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+# Files under .github/workflows folder are generated and should not be edited. #
+################################################################################
+
+name: '[DEV] Azure Serverless Architecture with Terraform'
+on:
+  push:
+    branches:
+      - develop
+env:
+  APP_NAME: "azure-serverless"
+  APP_DISPLAY_NAME: "Azure Serverless Architecture with Terraform"
+  VERSION: "1.0.0-SNAPSHOT"
+  STAGE_NAME: "dev"
+  NODE_VERSION: "16"
+  NAMESPACE: "microtema-dev-westeurope-01"
+  AZURE_LOCATION: "westeurope"
+  AZURE_CREDENTIALS: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+jobs:
+  compile:
+    name: Initialize
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: 'Install Azure function CLI'
+        run: |
+          wget -q https://packages.microsoft.com/config/ubuntu/19.04/packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install azure-functions-core-tools
+          func
+      - uses: actions/checkout@v3
+      - name: 'Cache node modules'
+        id: cache-nodemodules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install Dependencies
+        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+        run: npm install
+  security-check:
+    name: 'Security Check'
+    runs-on: [ ubuntu-latest ]
+    needs: [ compile ]
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - name: 'NPM: security-check'
+        run: npm run security-check
+  unit-test:
+    name: 'Unit Test'
+    runs-on: [ ubuntu-latest ]
+    needs: [ compile ]
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - name: 'NPM: test'
+        run: npm test
+  build:
+    name: 'Build'
+    runs-on: [ ubuntu-latest ]
+    needs: [ unit-test ]
+    env:
+      BUILD_DIR: dist
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - name: 'NPM: install'
+        run: npm install
+      - name: 'NPM: build'
+        run: npm run build
+      - name: 'Artifact: prepare'
+        run: |
+          mkdir -p artifact/$BUILD_DIR
+          cp -r $BUILD_DIR/* artifact/$BUILD_DIR/
+      - name: 'Artifact: upload'
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-artifact
+          path: artifact
+  promote:
+    name: 'Promote'
+    runs-on: [ ubuntu-latest ]
+    needs: [ build ]
+    steps:
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ env.AZURE_CREDENTIALS }}
+      - name: 'Check Resource Group'
+        id: rg-check
+        run: echo "exists=$(az group exists -n rg-$NAMESPACE)" >> $GITHUB_OUTPUT
+      - name: 'Create Resource Group'
+        if: steps.rg-check.outputs.exists == 'false'
+        run: |
+          az group create \
+          --location $AZURE_LOCATION \
+          --name rg-$NAMESPACE
+      - name: Wait Resource Group
+        if: steps.rg-check.outputs.exists == 'false'
+        run: |
+          az group wait --created  \
+           --resource-group rg-$NAMESPACE
+      - name: Create Storage Account
+        if: steps.rg-check.outputs.exists == 'false'
+        run: |
+          az storage account create \
+          --name ${NAMESPACE//[^[:alnum:]]/""} \
+          --resource-group rg-$NAMESPACE
+      - name: Create Storage Container
+        if: steps.rg-check.outputs.exists == 'false'
+        run: |
+          az storage container create \
+          --name scm-releases \
+          --resource-group rg-$NAMESPACE \
+          --account-name ${NAMESPACE//[^[:alnum:]]/""}
+  deployment:
+    name: 'Deployment'
+    runs-on: [ ubuntu-latest ]
+    needs: [ promote ]
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID}}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET}}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      - name: 'Artifact: download'
+        uses: actions/download-artifact@v2
+        with:
+          name: dist-artifact
+      - name: 'Terraform Init'
+        working-directory: ./terraform
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=rg-$NAMESPACE" \
+            -backend-config="storage_account_name=${NAMESPACE//[^[:alnum:]]/""}"
+      - name: 'Terraform Validate'
+        working-directory: ./terraform
+        run: terraform validate
+      - name: 'Terraform Plan'
+        working-directory: ./terraform
+        run: |
+          terraform plan -out=tfplan \
+            -input=false \
+            -var-file="env/.$STAGE_NAME.tfvars"
+      - name: 'Terraform Apply'
+        working-directory: ./terraform
+        run: terraform apply tfplan
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ env.AZURE_CREDENTIALS }}
+      - name: 'Install Azure function CLI'
+        run: |
+          unzip -d azure-functions-cli ./lib/*.zip
+          cd azure-functions-cli
+          chmod +x func
+          ./func

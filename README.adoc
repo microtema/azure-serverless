@@ -1,0 +1,161 @@
+= Azure Serverless Architecture with Terraform
+
+== Terraform
+
+Following the standard naming convention in Terraform, we will define our infrastructure module within 4 files:
+
+```
+❯ tree terraform
+terraform
+├── main.tf
+├── outputs.tf
+├── providers.tf
+└── variables.tf
+```
+
+* main.tf is where the cloud resources and their configuration will be defined.
+* variables.tf is for definitions of variables used in main.tf.
+* terraform.tfvars is for actual values of variables from varaibles.tf.
+* outputs.tf lists the values that main.tf should report back to the user.
+
+=== Variables
+
+To make our module reusable, we can define a list of variables (you can think about them as of input arguments) it supports.
+Later we will reference them within the module.
+Each variable declaration consists of a name at minimum, but also can specify variable type, description and default value.
+Let's add 3 variables:
+
+[source,hcl-terraform]
+----
+include::terraform/variables.tf[]
+----
+
+=== Variables Values
+
+Terraform will automatically load all .tf and .tfvars files in the module's directory.
+Latter is to specify values for module variables defined in the previous step.
+Alternatively you can pass them as command line arguments or with environment variables.
+
+[source,hcl-terraform]
+----
+include::terraform/env/.dev.tfvars[]
+----
+
+=== Provider
+
+You deploy Terraform module to a provider.
+Obvious provider examples are cloud providers like AWS/GCP/Azure but there are many more.
+You can manage resources and configuration in Digital Ocean, Heroku, Github and Netlfy.
+See the full list of providers in the
+
+[source,hcl-terraform]
+----
+include::terraform/providers.tf[]
+----
+
+=== Resource Group
+
+Resource Group is a logical container to organize resources together and manage permissions in Azure.
+Each resource must belong to a single resource group.
+
+[source,hcl-terraform]
+----
+include::terraform/main.tf[tags=azurerm_resource_group]
+----
+
+=== Storage Account
+
+Storage account is another resource required for our function app.
+It will host the file system of the container running our function app.
+This is where the code will be uploaded as well as where logs and any temporary files will be written to.
+
+*Notes*:
+
+* Storage account naming convention is an exception to the rule since Azure doesn't allow - in the name
+* We reference the resource group created in the previous step.
+This also signals to Terraform in which order to create resources so that dependencies are properly resolved.
+* LRS stands for "Locally redundant storage" where your data is replicated within a single region.
+A more advanced setting here is ZRS which is "Zone-redundant storage".
+
+[source,hcl-terraform]
+----
+include::terraform/main.tf[tags=azurerm_storage_account]
+----
+
+=== Application Insights
+
+Application Insights is a component of Azure Monitor which allows you to collect metrics and logs from your function app.
+
+[source,hcl-terraform]
+----
+include::terraform/main.tf[tags=azurerm_application_insights]
+----
+
+=== App Service Plan
+
+A Function App must always be associated with an App Service Plan which defines the compute resources available to the FA and how it scales.
+
+There are 3 plans available:
+
+* Consumption Plan.
+Serverless, scales automatically with the number of events.
+No events => zero instances (you pay nothing).
+* Premium Plan.
+You reserve a number of always-ready instances which run no matter if there are events or not.
+As load grows, new instances are added automatically.
+* Dedicated (App Service) Plan.
+FAs will run on VMs managed by you.
+Doesn't scale automatically based on events.
+
+Naming is a bit unfortunate here since the 3rd option has "App Service Plan" in it too.
+We want to go serverless thus we choose a Linux Consumption App Service Plan. sku section below sets it.
+
+[source,hcl-terraform]
+----
+include::terraform/main.tf[tags=azurerm_app_service_plan]
+----
+
+=== Function App
+
+The final resource we need to create is the function app itself.
+It references resources created earlier: App Service Plan, Application Insights instance and storage account.
+Version is set to 3, which is the latest version of Azure Functions at the moment.
+
+app_settings is a key-value block with configuration options for all of the functions in the Function App.
+If you need to pass an environment variable to your code, add it here.
+
+If you publish code with other tools (e.g. Azure Functions Core Tools, or VS Code, or use ZIP deploy directly), they may change the value of WEBSITE_RUN_FROM_PACKAGE.
+To prevent Terraform from reporting about configuration drift in these cases, we set the app setting to an empty value and ignore changes in the lifecycle block.
+Note: alternatively you can deploy the function code with Terraform too - there won't be this issue then.
+
+For CORS configuration, check the cors parameter in the resource documentation.
+
+[source,hcl-terraform]
+----
+include::terraform/main.tf[tags=azurerm_function_app]
+----
+
+=== Terraform Output
+
+We have all the components defined in Terraform now.
+Once we deploy the module we want to know the hostname of our function app to make a test call.
+We also need the Azure name of the function app for the next step where we deploy the function code.
+
+[source,hcl-terraform]
+----
+include::terraform/outputs.tf[]
+----
+
+=== Verify infrastructure is deployed
+
+Open the function app hostname in the browser.
+You should see the success page:
+
+image::docs/08_Deployment.png[]
+
+== Deploy the code
+
+
+
+
+
