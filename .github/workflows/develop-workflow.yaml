@@ -164,4 +164,4 @@ jobs:
           sudo apt-get install azure-functions-core-tools
           func
       - name: 'Deploy Azure functions'
-        run: func azure functionapp publish app-$NAMESPACE
+        run: func azure functionapp publish app-$NAMESPACE --javascript
