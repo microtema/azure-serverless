@@ -7,7 +7,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const responseMessage =  "Delete Entity";
 
     context.res = {
-        // status: 200, /* Defaults to 200 */
+        status: 200, /* Defaults to 200 */
         body: responseMessage
     };
 
