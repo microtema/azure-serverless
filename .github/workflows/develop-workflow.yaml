@@ -131,7 +131,7 @@ jobs:
         with:
           terraform_wrapper: false
       - name: 'Artifact: download'
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: dist-artifact
       - name: 'Terraform Init'
@@ -157,6 +157,9 @@ jobs:
     runs-on: [ ubuntu-latest ]
     needs: [ deployment ]
     steps:
+      - steps:
+          - name: 'Checkout'
+            uses: actions/checkout@v3
       - name: 'Azure Login'
         uses: azure/login@v1
         with:
