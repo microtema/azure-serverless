@@ -163,9 +163,3 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ env.AZURE_CREDENTIALS }}
-      - name: 'Install Azure function CLI'
-        run: |
-          unzip -d azure-functions-cli ./lib/*.zip
-          cd azure-functions-cli
-          chmod +x func
-          ./func
