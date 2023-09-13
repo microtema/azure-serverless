@@ -73,6 +73,8 @@ resource "azurerm_function_app" "this" {
     cors {
       allowed_origins = ["*"]
     }
+
+    linux_fx_version = "Node|14"
   }
   tags = local.tags
 }
