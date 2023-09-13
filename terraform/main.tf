@@ -46,14 +46,6 @@ resource "azurerm_app_service_plan" "this" {
 }
 // end::azurerm_app_service_plan[]
 
-// tag::archive_file[]
-data "archive_file" "lib" {
-  type        = "zip"
-  source_dir  = "${path.module}/../dist"
-  output_path = "${path.module}/../dist/${var.project}.zip"
-}
-// end::archive_file[]
-
 // tag::azurerm_function_app[]
 resource "azurerm_function_app" "this" {
   name                       = "app-${local.namespace}"

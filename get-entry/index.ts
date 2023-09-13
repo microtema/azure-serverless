@@ -1,14 +1,12 @@
 import {AzureFunction, Context, HttpRequest} from "@azure/functions"
+import {HttpResponse} from "../src/models/models";
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<HttpResponse> {
     context.log('HTTP trigger function processed a request.');
 
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = "Get Entity: " + name;
-
-    context.res = {
+    return {
         status: 200, /* Defaults to 200 */
-        body: responseMessage
+        body: req.params.id
     };
 
 };
