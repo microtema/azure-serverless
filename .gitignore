@@ -52,5 +52,7 @@ terraform/.terraform
 terraform/.terraform.lock.hcl
 !terraform/env
 
+!.github/env
+
 .vscode
 .idea

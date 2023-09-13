@@ -2,9 +2,15 @@
 *.ts
 .git*
 .vscode
+.idea
+.github
 local.settings.json
+tsconfig.json
 test
 getting_started.md
 node_modules/@types/
 node_modules/azure-functions-core-tools/
 node_modules/typescript/
+terraform
+docs
+README.adoc
