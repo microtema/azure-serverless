@@ -65,12 +65,22 @@ resource "azurerm_function_app" "this" {
   version                    = "~3"
   os_type                    = "linux"
   app_settings               = {
-    "FUNCTIONS_WORKER_RUNTIME"       = "node"
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.this.instrumentation_key
+    WEBSITE_RUN_FROM_PACKAGE       = "1"
+    FUNCTIONS_WORKER_RUNTIME       = "node"
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.this.instrumentation_key
+    AzureWebJobsStorage            = data.azurerm_storage_account.this.primary_blob_connection_string
   }
+  lifecycle {
+    ignore_changes = [
+      app_settings["WEBSITE_RUN_FROM_PACKAGE"]
+    ]
+  }
+
+  # FIXME: Use DNS names instead of enabling CORS
   site_config {
-    linux_fx_version          = "node|14"
-    use_32_bit_worker_process = false
+    cors {
+      allowed_origins = ["*"]
+    }
   }
   tags = local.tags
 }

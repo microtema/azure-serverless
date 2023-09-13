@@ -159,14 +159,16 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
-        with:
-          app-name: 'app-microtema-dev-westeurope-01'
-          slot-name: 'Production'
-          package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C75DAB8945064A748FD196223AE21D42 }}
       - name: 'Azure Login'
         uses: azure/login@v1
         with:
           creds: ${{ env.AZURE_CREDENTIALS }}
+      - name: 'Install Azure function CLI'
+        run: |
+          wget -q https://packages.microsoft.com/config/ubuntu/19.04/packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install azure-functions-core-tools
+          func
+      - name: 'Deploy Azure functions'
+        run: func azure functionapp publish app-$NAMESPACE --typescript
