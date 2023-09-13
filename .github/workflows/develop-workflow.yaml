@@ -158,10 +158,18 @@ jobs:
           creds: ${{ env.AZURE_CREDENTIALS }}
       - name: 'Install Azure function CLI'
         run: |
-          wget -q https://packages.microsoft.com/config/ubuntu/19.04/packages-microsoft-prod.deb
-          sudo dpkg -i packages-microsoft-prod.deb
+          echo Install the Microsoft package repository GPG key, to validate package integrity
+          curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          
+          echo Set up the APT source list before doing an APT update
+          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
+          
+          echo Start the APT source update
           sudo apt-get update
-          sudo apt-get install azure-functions-core-tools
+          
+          echo Install the Core Tools package
+          sudo apt-get install azure-functions-core-tools-4
+          
           func
       - name: 'Deploy Azure functions'
         run: func azure functionapp publish app-$NAMESPACE --typescript
