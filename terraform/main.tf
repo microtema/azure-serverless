@@ -50,9 +50,9 @@ resource "azurerm_app_service_plan" "this" {
 resource "azurerm_function_app" "this" {
   name                       = "app-${local.namespace}"
   resource_group_name        = data.azurerm_resource_group.this.name
+  storage_account_name       = data.azurerm_storage_account.this.name
   location                   = var.location
   app_service_plan_id        = azurerm_app_service_plan.this.id
-  storage_account_name       = data.azurerm_storage_account.this.name
   storage_account_access_key = data.azurerm_storage_account.this.primary_access_key
   version                    = "~3"
   os_type                    = "linux"
@@ -76,6 +76,65 @@ resource "azurerm_function_app" "this" {
 
     linux_fx_version = "Node|14"
   }
+
   tags = local.tags
 }
 // end::azurerm_function_app[]
+
+resource "azurerm_cosmosdb_account" "this" {
+  name                = "account-${local.namespace}"
+  resource_group_name = data.azurerm_resource_group.this.name
+  location            = var.location
+  offer_type          = "Standard"
+
+  consistency_policy {
+    consistency_level = "Session"
+  }
+
+  geo_location {
+    location          = var.location
+    failover_priority = 0
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_cosmosdb_sql_database" "this" {
+  name                = "db-${local.namespace}"
+  resource_group_name = data.azurerm_resource_group.this.name
+  account_name        = azurerm_cosmosdb_account.this.name
+}
+
+
+resource "azurerm_cosmosdb_sql_container" "this" {
+  name                  = "container-${local.namespace}"
+  resource_group_name   = data.azurerm_resource_group.this.name
+  account_name          = azurerm_cosmosdb_account.this.name
+  database_name         = azurerm_cosmosdb_sql_database.this.name
+  partition_key_path    = "/definition/id"
+  partition_key_version = 1
+  throughput            = 400
+
+  indexing_policy {
+    indexing_mode = "consistent"
+
+    included_path {
+      path = "/*"
+    }
+
+    included_path {
+      path = "/included/?"
+    }
+
+    excluded_path {
+      path = "/excluded/?"
+    }
+  }
+
+  unique_key {
+    paths = ["/definition/idlong", "/definition/idshort"]
+  }
+}
+
+
+
