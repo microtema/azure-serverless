@@ -176,7 +176,7 @@ jobs:
       - name: 'Deploy Azure functions'
         run: func azure functionapp publish app-$NAMESPACE --typescript
   system-test:
-    name: 'Unit Test'
+    name: 'System Test'
     runs-on: [ ubuntu-latest ]
     needs: [ deployment ]
     steps:
