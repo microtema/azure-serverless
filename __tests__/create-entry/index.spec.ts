@@ -22,7 +22,11 @@ describe('Create Entry API', () => {
     test('should create new entry', async () => {
 
         // Given
-        request.body = {name: faker.person.firstName(), definition: {id: faker.person.sex()}}
+        request.body = {
+            name: faker.person.firstName(),
+            cid: faker.string.uuid(),
+            definition: {id: faker.person.sex()
+            }}
 
         // When
         const answer = await sut(context, request)

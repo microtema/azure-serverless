@@ -134,7 +134,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
   }
 
   unique_key {
-    paths = ["/definition/idlong", "/definition/idshort"]
+    paths = ["/cid"]
   }
 }
 // end::azurerm_cosmosdb_sql_container[]

@@ -4,27 +4,25 @@ import {faker} from '@faker-js/faker';
 import sut from "../../create-entry"
 import {v4 as uuidv4} from "uuid";
 
+jest.mock('@azure/cosmos', () => {
+    return {
+        CosmosClient: jest.fn(() => ({
+            database: jest.fn(() => ({
+                container: jest.fn(() => ({
+                    items: {
+                        create: jest.fn((item) => Promise.resolve({item}))
+                    }
+                }))
+            }))
+        }))
+    }
+})
+
 describe('Create Entry API', () => {
 
     let context: Context;
     let request: HttpRequest;
     let body = {} as any
-
-    beforeAll(() => {
-        jest.mock('@azure/cosmos', () => {
-            return {
-                CosmosClient: jest.fn(() => ({
-                    database: jest.fn(() => ({
-                        container: jest.fn(() => ({
-                            items: {
-                                create: jest.fn(() => body)
-                            }
-                        }))
-                    }))
-                }))
-            }
-        })
-    })
 
     beforeEach(() => {
 
@@ -40,7 +38,11 @@ describe('Create Entry API', () => {
     test('should create new entry', async () => {
 
         // Given
-        request.body = {name: faker.person.firstName(), definition: {id: faker.person.sex()}}
+        request.body = {
+            name: faker.person.firstName(),
+            cid: faker.string.uuid(),
+            definition: {id: faker.person.sex()}
+        }
 
         // When
         const answer = await sut(context, request)
@@ -56,6 +58,7 @@ describe('Create Entry API', () => {
         // Given
         request.body = {
             name: faker.person.firstName(),
+            cid: faker.string.uuid(),
             definition: {id: faker.person.sex()},
             id: uuidv4()
         }
