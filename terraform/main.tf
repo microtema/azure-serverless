@@ -81,6 +81,7 @@ resource "azurerm_function_app" "this" {
 }
 // end::azurerm_function_app[]
 
+// tag::azurerm_cosmosdb_account[]
 resource "azurerm_cosmosdb_account" "this" {
   name                = "account-${local.namespace}"
   resource_group_name = data.azurerm_resource_group.this.name
@@ -104,8 +105,9 @@ resource "azurerm_cosmosdb_sql_database" "this" {
   resource_group_name = data.azurerm_resource_group.this.name
   account_name        = azurerm_cosmosdb_account.this.name
 }
+// end::azurerm_cosmosdb_account[]
 
-
+// tag::azurerm_cosmosdb_sql_container[]
 resource "azurerm_cosmosdb_sql_container" "this" {
   name                  = "container-${local.namespace}"
   resource_group_name   = data.azurerm_resource_group.this.name
@@ -135,6 +137,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
     paths = ["/definition/idlong", "/definition/idshort"]
   }
 }
+// end::azurerm_cosmosdb_sql_container[]
 
 
 

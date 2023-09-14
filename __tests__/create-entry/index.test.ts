@@ -27,6 +27,9 @@ describe('Create Entry API', () => {
     })
 
     beforeEach(() => {
+
+        jest.resetModules() // Most important - it clears the cache
+
         // Really crude and unsafe implementations that will be replaced soon
         context = {
             log: jest.fn()
@@ -37,7 +40,7 @@ describe('Create Entry API', () => {
     test('should create new entry', async () => {
 
         // Given
-        body = {name: faker.person.firstName(), definition: {id: faker.person.sex()}}
+        request.body = {name: faker.person.firstName(), definition: {id: faker.person.sex()}}
 
         // When
         const answer = await sut(context, request)
@@ -51,7 +54,7 @@ describe('Create Entry API', () => {
     test('should override id on new entry', async () => {
 
         // Given
-        body = {
+        request.body = {
             name: faker.person.firstName(),
             definition: {id: faker.person.sex()},
             id: uuidv4()

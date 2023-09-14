@@ -5,10 +5,9 @@ import {HttpResponse} from "../src/models/models";
 
 const config = {
     endpoint: 'https://account-microtema-dev-westeurope-01.documents.azure.com:443/',
-    key: 'VqIbA78xGWh1n87jlhDRKmWZ15tq2IcU5xlXaRpJ2Q0BqncOOP0V8UCrqOQ8WWx5EJNDOKxo1rW5ACDbBYxSIw==',
+    key: 'pQkgzYWJwheM56IKzpwh2diItm1gcYIOFPIZraZGEgV5RdwbpXk3eGBjhkxaYQU9LiPnfb6wJ7QvACDbk7uGOg==',
     database: 'db-microtema-dev-westeurope-01',
     container: 'container-microtema-dev-westeurope-01',
-    partitionKey: '/definition/id'
 }
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<HttpResponse> {

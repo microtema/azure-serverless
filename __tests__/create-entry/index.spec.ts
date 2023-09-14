@@ -16,13 +16,13 @@ describe('Create Entry API', () => {
             log: () => {
             }
         } as unknown as Context;
-        request = {body} as unknown as HttpRequest;
+        request = {body: body} as unknown as HttpRequest;
     });
 
     test('should create new entry', async () => {
 
         // Given
-        body = {name: faker.person.firstName(), definition: {id: faker.person.sex()}}
+        request.body = {name: faker.person.firstName(), definition: {id: faker.person.sex()}}
 
         // When
         const answer = await sut(context, request)

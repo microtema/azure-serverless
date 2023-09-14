@@ -1,5 +1,7 @@
 = Azure Serverless Architecture with Terraform
 
+image::docs/rg-microtema-dev-westeurope-01.png[]
+
 == Terraform
 
 Following the standard naming convention in Terraform, we will define our infrastructure module within 4 files:
