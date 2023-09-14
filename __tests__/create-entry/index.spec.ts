@@ -7,7 +7,7 @@ describe('Create Entry API', () => {
     test('should create new entry', async () => {
 
         // Given
-        const url = "https://" + process.env.NAMESPACE + ".azurewebsites.net/rest/api/products";
+        const url = "https://app-" + process.env.NAMESPACE + ".azurewebsites.net/rest/api/products";
         console.log("url", url)
         const data = {
             name: faker.person.firstName(),
