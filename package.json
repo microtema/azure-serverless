@@ -13,8 +13,8 @@
     "prepublish": "npm run build:production",
     "publish": "func azure functionapp publish app-microtema-dev-westeurope-01 --typescript",
     "security-check": "echo not implemented yet!",
-    "test": "jest --testPathPattern=test\\.ts$",
-    "test:integration": "jest --testPathPattern=spec\\.ts$"
+    "test": "jest --testPathPattern=test\\.ts$ --coverage",
+    "test:integration": "jest --testPathPattern=spec\\.ts$ --coverage"
   },
   "dependencies": {
     "@azure/cosmos": "^4.0.0",
