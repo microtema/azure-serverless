@@ -7,8 +7,8 @@ describe('Create Entry API', () => {
     test('should create new entry', async () => {
 
         // Given
-        const url = "https://app-" + process.env.NAMESPACE + ".azurewebsites.net/rest/api/products";
-        console.log("url", url)
+        const url = "https://app-" + (process.env.NAMESPACE || "microtema-dev-westeurope-01") + ".azurewebsites.net/rest/api/products";
+
         const data = {
             name: faker.person.firstName(),
             cid: faker.string.uuid(),
