@@ -8,6 +8,7 @@ describe('Create Entry API', () => {
 
         // Given
         const url = "https://" + process.env.NAMESPACE + ".azurewebsites.net/rest/api/products";
+        console.log("url", url)
         const data = {
             name: faker.person.firstName(),
             cid: faker.string.uuid(),
