@@ -61,6 +61,12 @@ resource "azurerm_function_app" "this" {
     FUNCTIONS_WORKER_RUNTIME       = "node"
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.this.instrumentation_key
     AzureWebJobsStorage            = data.azurerm_storage_account.this.primary_blob_connection_string
+
+    COSMOSDB_ENDPOINT          = azurerm_cosmosdb_account.this.endpoint
+    COSMOSDB_KEY               = azurerm_cosmosdb_account.this.primary_key
+    COSMOSDB_DATABASE_NAME     = azurerm_cosmosdb_sql_database.this.name
+    COSMOSDB_CONTAINER_NAME    = azurerm_cosmosdb_sql_container.this.name
+    COSMOSDB_USER_AGENT_SUFFIX = var.project
   }
   lifecycle {
     ignore_changes = [

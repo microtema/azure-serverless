@@ -24,6 +24,14 @@ describe('Create Entry API', () => {
     let request: HttpRequest;
     let body = {} as any
 
+    process.env = {
+        COSMOSDB_ENDPOINT: 'https://test.documents.azure.com:443',
+        COSMOSDB_KEY: 'key',
+        COSMOSDB_DATABASE_NAME: 'database',
+        COSMOSDB_CONTAINER_NAME: 'container',
+        COSMOSDB_USER_AGENT_SUFFIX: 'test'
+    }
+
     beforeEach(() => {
 
         jest.resetModules() // Most important - it clears the cache

@@ -1,39 +1,29 @@
-import {describe, expect, test, beforeEach} from "@jest/globals";
-import {Context, HttpRequest} from "@azure/functions";
-import {v4 as uuidv4} from 'uuid';
+import {describe, expect, test} from "@jest/globals";
+import axios from 'axios';
 import {faker} from '@faker-js/faker';
-import sut from "../../create-entry"
 
 describe('Create Entry API', () => {
-
-    let context: Context;
-    let request: HttpRequest;
-    let body = {} as any
-
-    beforeEach(() => {
-        // Really crude and unsafe implementations that will be replaced soon
-        context = {
-            log: () => {
-            }
-        } as unknown as Context;
-        request = {body: body} as unknown as HttpRequest;
-    });
 
     test('should create new entry', async () => {
 
         // Given
-        request.body = {
+        const url = "https://" + process.env.NAMESPACE + ".azurewebsites.net/rest/api/products";
+        const data = {
             name: faker.person.firstName(),
             cid: faker.string.uuid(),
-            definition: {id: faker.person.sex()
-            }}
+            definition: {
+                id: faker.person.sex()
+            }
+        }
 
         // When
-        const answer = await sut(context, request)
+        const answer = await axios.post(url, data)
 
         // Then
         expect(answer).toBeDefined()
         expect(answer.status).toBe(201)
-        expect(answer.body.id).toBeDefined()
+
+        expect(answer.data.id).toBeDefined()
+        expect(answer.data).toEqual({...data, ...{id: answer.data.id}})
     });
 })
