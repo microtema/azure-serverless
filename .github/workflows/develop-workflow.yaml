@@ -31,6 +31,7 @@ jobs:
           echo "$(curl -s $SERVICE_URL)"
           echo "$(curl -s $SERVICE_URL | jq)"
           echo "$(curl -s $SERVICE_URL | jq .commitId)"
+          echo "$(curl -s $SERVICE_URL | jq -r '.commitId')"
   compile:
     name: Initialize
     runs-on: [ ubuntu-latest ]
