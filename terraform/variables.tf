@@ -29,7 +29,7 @@ variable "counter" {
 variable "commit_id" {
   type        = string
   description = "Git commit id in short form"
-  default     = "01"
+  default     = "xxxx"
 }
 
 variable "branch" {
