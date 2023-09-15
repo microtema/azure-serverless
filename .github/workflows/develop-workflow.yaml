@@ -186,7 +186,7 @@ jobs:
       SERVICE_URL: https://app-$NAMESPACE.azurewebsites.net/rest/api/products/git/info
     steps:
       - name: 'Shell: readiness'
-        run: while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
+        run: while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10 && echo "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ; done
   system-test:
     name: 'System Test'
     runs-on: [ ubuntu-latest ]
