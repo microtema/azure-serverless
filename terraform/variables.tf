@@ -25,3 +25,15 @@ variable "counter" {
   description = "Counter for resources"
   default     = "01"
 }
+
+variable "commit_id" {
+  type        = string
+  description = "Git commit id in short form"
+  default     = "01"
+}
+
+variable "branch" {
+  type        = string
+  description = "current branch"
+  default     = "1.0.0-SNAPSHOT"
+}

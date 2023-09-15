@@ -150,6 +150,8 @@ jobs:
         run: |
           terraform plan -out=tfplan \
             -input=false \
+            -var=commit_id=$GITHUB_SHA \
+            -var=branch=$VERSION \
             -var-file="env/.$STAGE_NAME.tfvars"
       - name: 'Terraform Apply'
         working-directory: ./terraform
@@ -175,6 +177,16 @@ jobs:
           func
       - name: 'Deploy Azure functions'
         run: func azure functionapp publish app-$NAMESPACE --typescript
+  readiness:
+    name: 'Readiness Check'
+    runs-on: [ ubuntu-latest ]
+    needs: [ deployment ]
+    timeout-minutes: 15
+    env:
+      SERVICE_URL: https://app-$NAMESPACE.azurewebsites.net/rest/api/products/git/info
+    steps:
+      - name: 'Shell: readiness'
+        run: while [[ "$(curl -s $SERVICE_URL - | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
   system-test:
     name: 'System Test'
     runs-on: [ ubuntu-latest ]

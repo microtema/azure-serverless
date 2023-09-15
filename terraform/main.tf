@@ -25,9 +25,10 @@ resource "azurerm_storage_account" "this" {
 // tag::azurerm_application_insights[]
 resource "azurerm_application_insights" "this" {
   name                = "insights-${local.namespace}"
-  location            = var.location
   resource_group_name = data.azurerm_resource_group.this.name
+  location            = var.location
   application_type    = "Node.JS"
+  tags                = local.tags
 }
 // end::azurerm_application_insights[]
 
@@ -67,6 +68,9 @@ resource "azurerm_function_app" "this" {
     COSMOSDB_DATABASE_NAME     = azurerm_cosmosdb_sql_database.this.name
     COSMOSDB_CONTAINER_NAME    = azurerm_cosmosdb_sql_container.this.name
     COSMOSDB_USER_AGENT_SUFFIX = var.project
+
+    COMMIT_ID = var.commit_id
+    VERSION   = var.branch
   }
   lifecycle {
     ignore_changes = [
