@@ -175,8 +175,10 @@ jobs:
           sudo apt-get install azure-functions-core-tools-4
           
           func
-      - name: 'NPM: publish'
-        run: npm run publish
+      - name: 'NPM: build:production'
+        run: npm run build:production
+      - name: 'Deploy Azure functions'
+        run: func azure functionapp publish app-$NAMESPACE --typescript
   readiness:
     name: 'Readiness Check'
     runs-on: [ ubuntu-latest ]
