@@ -17,7 +17,7 @@ env:
   NAMESPACE: "microtema-dev-westeurope-01"
   AZURE_LOCATION: "westeurope"
   AZURE_CREDENTIALS: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-  SERVICE_URL: https://app-${{ env.NAMESPACE }}.azurewebsites.net/rest/api/products/git/info
+  SERVICE_URL: https://app-microtema-dev-westeurope-01.azurewebsites.net/rest/api/products/git/info
 jobs:
   readinessx:
     name: 'Readiness Check'
