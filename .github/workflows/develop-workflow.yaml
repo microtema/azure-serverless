@@ -24,7 +24,7 @@ jobs:
     needs: [  ]
     timeout-minutes: 5
     env:
-      SERVICE_URL: https://app-$NAMESPACE.azurewebsites.net/rest/api/products/git/info
+      SERVICE_URL: https://app-${{ env.NAMESPACE }}.azurewebsites.net/rest/api/products/git/info
     steps:
       - name: 'Shell: readiness'
         run: |
