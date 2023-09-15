@@ -28,10 +28,10 @@ jobs:
     steps:
       - name: 'Shell: readiness'
         run: |
+          curl $SERVICE_URL
           echo "$(curl -s $SERVICE_URL)"
           echo "$(curl -s $SERVICE_URL | jq)"
           echo "$(curl -s $SERVICE_URL | jq .commitId)"
-          while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10 && echo "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA"; done
   compile:
     name: Initialize
     runs-on: [ ubuntu-latest ]
