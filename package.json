@@ -11,7 +11,7 @@
     "start:host": "func start",
     "start": "npm-run-all --parallel start:host watch",
     "prepublish": "npm run build:production",
-    "publish": "func azure functionapp publish app-$NAMESPACE --typescript",
+    "publish": "func azure functionapp publish app-microtema-dev-westeurope-01 --typescript",
     "security-check": "echo $NAMESPACE not implemented yet!",
     "test": "jest --testPathPattern=test\\.ts$ --coverage",
     "test:integration": "jest --testPathPattern=spec\\.ts$ --coverage"

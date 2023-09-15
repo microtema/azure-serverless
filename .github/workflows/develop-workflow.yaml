@@ -175,6 +175,8 @@ jobs:
           sudo apt-get install azure-functions-core-tools-4
           
           func
+      - name: 'NPM: install'
+        run: npm install
       - name: 'NPM: build:production'
         run: npm run build:production
       - name: 'Deploy Azure functions'
