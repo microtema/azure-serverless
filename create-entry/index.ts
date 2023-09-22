@@ -35,7 +35,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     } catch (e) {
         return {
             status: 500,
-            body: {message: "Unable to create new entry!", error: e.error}
+            body: {message: "Unable to create entry!", error: e.error}
         }
     }
 
