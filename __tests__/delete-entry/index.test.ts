@@ -1,17 +1,16 @@
 import {beforeEach, describe, expect, test} from "@jest/globals";
-import {Context, HttpRequest} from "@azure/functions";
+import {Context, HttpRequest, HttpRequestParams} from "@azure/functions";
 import {faker} from '@faker-js/faker';
-import sut from "../../create-entry"
-import {v4 as uuidv4} from "uuid";
+import sut from "../../delete-entry"
 
 jest.mock('@azure/cosmos', () => {
     return {
         CosmosClient: jest.fn(() => ({
             database: jest.fn(() => ({
                 container: jest.fn(() => ({
-                    items: {
-                        create: jest.fn((item) => Promise.resolve({item}))
-                    }
+                    item: jest.fn(() => ({
+                        delete: jest.fn(() => Promise.resolve())
+                    }))
                 }))
             }))
         }))
@@ -22,7 +21,7 @@ describe('Delete Entry API', () => {
 
     let context: Context;
     let request: HttpRequest;
-    let body = {} as any
+    let params = {} as HttpRequestParams
 
     process.env = {
         COSMOSDB_ENDPOINT: 'https://test.documents.azure.com:443',
@@ -40,16 +39,15 @@ describe('Delete Entry API', () => {
         context = {
             log: jest.fn()
         } as unknown as Context;
-        request = {body} as unknown as HttpRequest
+        request = {params} as unknown as HttpRequest
     });
 
-    test('should create new entry', async () => {
+    test('should delete entry', async () => {
 
         // Given
-        request.body = {
-            name: faker.person.firstName(),
-            cid: faker.string.uuid(),
-            definition: {id: faker.person.sex()}
+        request.params = {
+            id: faker.string.uuid(),
+            partition: faker.person.sex()
         }
 
         // When
@@ -57,16 +55,6 @@ describe('Delete Entry API', () => {
 
         // Then
         expect(answer).toBeDefined()
-        expect(answer.status).toBe(201)
-        expect(answer.body.id).toBeDefined()
-    });
-
-    test('should override id on new entry', async () => {
-
-        // Given
-
-        // When
-
-        // Then
+        expect(answer.status).toBe(200)
     });
 })
