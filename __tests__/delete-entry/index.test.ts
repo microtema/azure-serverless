@@ -1,7 +1,8 @@
 import {beforeEach, describe, expect, test} from "@jest/globals";
 import {Context, HttpRequest} from "@azure/functions";
 import {faker} from '@faker-js/faker';
-import sut from "../../git-info"
+import sut from "../../create-entry"
+import {v4 as uuidv4} from "uuid";
 
 jest.mock('@azure/cosmos', () => {
     return {
@@ -17,15 +18,18 @@ jest.mock('@azure/cosmos', () => {
     }
 })
 
-describe('Git info API', () => {
+describe('Delete Entry API', () => {
 
     let context: Context;
     let request: HttpRequest;
     let body = {} as any
 
     process.env = {
-        COMMIT_ID: faker.string.uuid(),
-        VERSION: faker.string.uuid()
+        COSMOSDB_ENDPOINT: 'https://test.documents.azure.com:443',
+        COSMOSDB_KEY: 'key',
+        COSMOSDB_DATABASE_NAME: 'database',
+        COSMOSDB_CONTAINER_NAME: 'container',
+        COSMOSDB_USER_AGENT_SUFFIX: 'test'
     }
 
     beforeEach(() => {
@@ -39,16 +43,30 @@ describe('Git info API', () => {
         request = {body} as unknown as HttpRequest
     });
 
-    test('should get git info', async () => {
+    test('should create new entry', async () => {
 
         // Given
+        request.body = {
+            name: faker.person.firstName(),
+            cid: faker.string.uuid(),
+            definition: {id: faker.person.sex()}
+        }
 
         // When
         const answer = await sut(context, request)
 
         // Then
         expect(answer).toBeDefined()
-        expect(answer.status).toBe(200)
-        expect(answer.body).toEqual({"commitId": process.env.COMMIT_ID, "branch": process.env.VERSION})
+        expect(answer.status).toBe(201)
+        expect(answer.body.id).toBeDefined()
+    });
+
+    test('should override id on new entry', async () => {
+
+        // Given
+
+        // When
+
+        // Then
     });
 })
