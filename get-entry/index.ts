@@ -9,8 +9,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         endpoint: process.env.COSMOSDB_ENDPOINT,
         key: process.env.COSMOSDB_KEY,
         userAgentSuffix: process.env.COSMOSDB_USER_AGENT_SUFFIX
-    };
-
+    }
 
     try {
 
