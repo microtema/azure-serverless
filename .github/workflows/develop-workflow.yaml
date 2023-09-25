@@ -188,7 +188,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: 'Shell: readiness'
-        run: while [[ "$(curl -s https://app-$NAMESPACE.azurewebsites.net/rest/api/products/git/info | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
+        run: while [[ "$(curl -s https://app-$NAMESPACE.azurewebsites.net/rest/api/git/info | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
   system-test:
     name: 'System Test'
     runs-on: [ ubuntu-latest ]
