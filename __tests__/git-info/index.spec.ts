@@ -6,7 +6,7 @@ describe('Get Git Info API', () => {
     test('should get info', async () => {
 
         // Given
-        const url = "https://app-" + (process.env.NAMESPACE || "microtema-dev-westeurope-01") + ".azurewebsites.net/rest/api/products/git/info";
+        const url = "https://app-" + (process.env.NAMESPACE || "microtema-dev-westeurope-01") + ".azurewebsites.net/rest/api/git/info";
 
         // When
         const answer = await axios.get(url)
@@ -16,6 +16,7 @@ describe('Get Git Info API', () => {
         expect(answer.status).toBe(200)
 
         expect(answer.data).toBeDefined()
-        expect(answer.data).toEqual({})
+        expect(answer.data.branch).toBeDefined()
+        expect(answer.data.commitId).toBeDefined()
     });
 })

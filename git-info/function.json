@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "products/git/info"
+      "route": "git/info"
     },
     {
       "type": "http",
