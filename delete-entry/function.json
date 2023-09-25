@@ -8,7 +8,7 @@
       "methods": [
         "delete"
       ],
-      "route": "products/{id}"
+      "route": "products/{id}/{partition}"
     },
     {
       "type": "http",
